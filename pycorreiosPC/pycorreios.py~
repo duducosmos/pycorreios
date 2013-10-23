@@ -148,7 +148,7 @@ class adentregas:
 
                     if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'
                        or teste == 'Saiu para entrega'
-                       or teste == 'Saiu para entrega ao destinat\xd0\xb1rio'):
+                       or teste == 'Saiu para entrega ao destinatбrio'):
                         saiuparaentrega = True
                 elif(len(tmp) == 5):
                     teste = tmp[2][0]
@@ -160,7 +160,7 @@ class adentregas:
                         
                     if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'
                        or teste == 'Saiu para entrega'
-                       or teste == 'Saiu para entrega ao destinat\xd0\xb1rio'
+                       or teste == 'Saiu para entrega ao destinatбrio'
                        ):
                         saiuparaentrega = True 
 

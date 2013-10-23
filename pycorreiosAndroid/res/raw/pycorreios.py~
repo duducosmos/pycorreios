@@ -11,7 +11,7 @@ Sistema de alerta de entregas automatico de pacotes enviados pelos correios
 """
 
 
-from BeautifulSoup import BeautifulSoup
+from beautifulsoup import BeautifulSoup
 from string import replace
 import sys
 import os
@@ -24,17 +24,23 @@ import time
 
 import getopt
 
-import pygame
 
 try:
     import pygame.mixer as mixer
 except ImportError:
-    import android.mixer as mixer
+    
+    import android
+
+    droid = android.Android()
+    
+    #def mixer(myfile):
+        #return droid.mediaPlay(myfile)
 
 
 class adentregas:
 
-    def __init__(self, rcode, deltat, alarmeLD=True, mysound='Rooster.wav'):
+    def __init__(self, rcode, deltat, LocalF = '/mnt/sdcard/pycorreios/',
+                       locOrigin=None, alarmeLD=True, mysound='Rooster.wav'):
         url1 = 'http://websro.correios.com.br/sro_bin/txect01$.Inexistente'
         url2 = '?P_LINGUA=001&P_TIPO=002&P_COD_LIS='
         self.alarmeLD = alarmeLD
@@ -42,26 +48,35 @@ class adentregas:
         self.rcode = rcode
         self.deltat = deltat
         self.objetoEstatus = None
+        self.locOrigin = locOrigin
         self.pageEstatus = None
-        self.mysound = os.path.expanduser('~') + \
-                        '/.pycorreios/sounds/' + mysound
-        self.myimage = os.path.expanduser('~') + \
-                        '/.pycorreios/images/'
+        self.LocalF = LocalF
+        self.mysound = LocalF + \
+                        'sounds/' + mysound
+        self.myimage = LocalF+ \
+                        'images/'
         self.__starting()
 
     def __starting(self):
 
-        pycorreiosLocal = imp.find_module('pycorreios')[1]
+        pycorreiosLocal = os.path.dirname(__file__) 
+        
+        #imp.find_module('pycorreios')[1]
 
-        HOME = os.path.expanduser('~')
+        HOME = self.LocalF
 
-        if not os.path.exists(HOME + '/.pycorreios'):
-
-            local = os.path.dirname(pycorreiosLocal)
+        if not os.path.exists(self.LocalF):
+            import zipfile
+            
+            if(self.locOrigin is not None):
+                local = self.locOrigin
+            else:
+                local = os.path.dirname(__file__)
             print 'Creating .pycorreios cache diretory in %s' % HOME
-            os.makedirs(HOME + '/.pycorreios')
-            shutil.copytree(local + '/sounds', HOME + '/.pycorreios/sounds')
-            shutil.copytree(local + '/images', HOME + '/.pycorreios/images')
+            os.makedirs(self.LocalF)
+            shutil.copyfile(local + '/extrafiles.zip', self.LocalF + 'extrafiles.zip')
+            zip = zipfile.ZipFile(r'' + self.LocalF + 'extrafiles.zip')
+            zip.extractall(self.LocalF)
 
     def openURL(self):
 
@@ -91,8 +106,9 @@ class adentregas:
         splited = str(brs[0]).split('>')
         tmp = [sp.split('<') for sp in splited]
         naoencontrado = tmp[2][0]
-        testador = u'Objetos n\u0103o Encontrados'
-        naoencontrado = naoencontrado.decode('utf-8')
+        print naoencontrado
+        testador = 'Objetos n\xc3\xa3o Encontrados'
+#naoencontrado = naoencontrado.decode('utf-8')
         if(testador == naoencontrado):
             self.objetoEstatus = 'Objeto nao Encontrado'
             return 'Objeto nao Encontrado, verifique o seu codigo'
@@ -142,17 +158,20 @@ class adentregas:
             for tdi in tds:
                 splited = str(tdi).split('>')
                 tmp = [sp.split('<') for sp in splited]
+
+                
                 if(len(tmp) == 3):
                     teste = tmp[1][0]
                     tdDecomp.append(teste)
+                    
 
-                    if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'
-                       or teste == 'Saiu para entrega'
-                       or teste == 'Saiu para entrega ao destinat\xd0\xb1rio'):
+                    if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'):
                         saiuparaentrega = True
                 elif(len(tmp) == 5):
                     teste = tmp[2][0]
-                    print teste
+                    
+                    
+                    
 
                     tdDecomp.append(teste)
                     if(teste == 'Entrega Efetuada'):
@@ -160,14 +179,15 @@ class adentregas:
                         
                     if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'
                        or teste == 'Saiu para entrega'
-                       or teste == 'Saiu para entrega ao destinat\xd0\xb1rio'
                        ):
-                        saiuparaentrega = True 
+                        saiuparaentrega = True                 
+
+                    
 
             if(saiuparaentrega is True and
                 self.objetoEstatus == 'Entrega Efetuada'):
                 return [saiuparaentrega, tdDecomp[0], tdDecomp, table]
-            elif(saiuparaentrega is True):
+            elif(saiuparaentrega is True and self.objetoEstatus != 'Entrega Efetuada'):
                 self.objetoEstatus = 'Saiu para entrega'
                 return [saiuparaentrega, tdDecomp[0], tdDecomp, table]
             else:
@@ -185,9 +205,7 @@ class adentregas:
 
     def alarme(self):
         if(self.alarmeLD is True):
-            mixer.init()
-            sound = mixer.Sound(self.mysound)
-            sound.play()
+            droid.mediaPlay(self.mysound)
         else:
             pass
         return None
@@ -236,5 +254,10 @@ class adentregas:
 
                 if(countConection == 3):
                     return 'Erro de Conexao'
+
+if(__name__ == '__main__'):
+    #PG834109975BR
+    obj = adentregas('PG834109975BR', 30.0)
+    obj.monitorEntregas()
 
 

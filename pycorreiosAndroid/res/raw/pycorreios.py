@@ -165,7 +165,8 @@ class adentregas:
                     tdDecomp.append(teste)
                     
 
-                    if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'):
+                    if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio' or 
+			teste == 'Saiu para entrega'):
                         saiuparaentrega = True
                 elif(len(tmp) == 5):
                     teste = tmp[2][0]
