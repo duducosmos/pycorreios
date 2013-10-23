@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello PyCorreios</string>
+    <string name="app_name">PyCorreios</string>
+    <string name="loading">PyCorreios Script loading</string>
+</resources>
