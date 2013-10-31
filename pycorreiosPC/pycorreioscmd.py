@@ -15,6 +15,7 @@ from pycorreios import *
 import sys
 import os
 import getopt
+import easygui as eg
 
 
 def main():

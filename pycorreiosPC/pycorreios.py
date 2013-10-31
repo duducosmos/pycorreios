@@ -157,12 +157,12 @@ class adentregas:
                     tdDecomp.append(teste)
                     if(teste == 'Entrega Efetuada'):
                         self.objetoEstatus = 'Entrega Efetuada'
-                        
+
                     if(teste == 'Saiu para entrega ao destinat\xc3\xa1rio'
                        or teste == 'Saiu para entrega'
                        or teste == 'Saiu para entrega ao destinat\xd0\xb1rio'
                        ):
-                        saiuparaentrega = True 
+                        saiuparaentrega = True
 
             if(saiuparaentrega is True and
                 self.objetoEstatus == 'Entrega Efetuada'):

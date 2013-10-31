@@ -120,10 +120,10 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
             if(self.playAlarm.value < 1):
                 self.listWidget.addItems(
                                     self.estatosDoProduto.value.split(';'))
-                #mixer.init()
-                #sound = mixer.Sound(r'' + self.localSom.value)
-                #sound.play()
-                QSound(r'' + self.localSom.value).play()
+                mixer.init()
+                sound = mixer.Sound(r'' + self.localSom.value)
+                sound.play()
+                #QSound(r'' + self.localSom.value).play()
                 self.playAlarm.value += 1
 
         elif(self.countEventos.value < self.TotEventos.value):
